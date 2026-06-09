@@ -12,8 +12,197 @@ GitHub Repository: [here](https://github.com/aylin224/ENVS-193DS_spring-2026_fin
 library(tidyverse)
 library(here)
 library(janitor)
+library(knitr)
+library(DHARMa)
 
-data <- read_csv(here("data/nest_data_final.csv"))
+nests <- read_csv(here("data/nest_data_final.csv"))
+
 ```
+
+## Problem 1. Research writing
+
+**a.** 
+In Part 1, my co-worker used a logistic regression model to test whether distance to water edge predicts the probability of American Avocet microhabitat use. In Part 2, they used a chi-square test of independence to evaluate whether bird species (American Avocet, Forster’s Tern, Black-necked Stilt) are associated with different habitat types (managed pond, non-tidal marsh, salt pond, tidal marsh, tidal mudflat).
+
+**b.**
+American Avocets are more likely to use habitat closer to the water’s edge, suggesting that proximity to water is an important factor shaping where they forage and rest. This pattern indicates that shoreline accessibility likely influences habitat selection.
+
+Bird species differ in how they use available habitats across the San Francisco Bay. Each species tends to be associated with certain habitat types, indicating that habitat structure and conditions likely shape where different shorebirds are found.
+
+**c.**
+One additional variable that could influence American Avocet habitat use is water depth (cm), measured at each microhabitat sampling point using a graduated meter stick during low tide surveys. Water depth likely affects avocet foraging efficiency because they feed in shallow water where prey is more accessible and wading is energetically efficient.
+
+## Problem 2. Data analysis
+
+**a. Clean and Wrangle**
+
+```{r}
+#| message: false
+
+nests_clean <- nests |> 
+  select(height_cm, ant_species, case_control) |> 
+  filter(ant_species %in% c("AB", "RRB", "BBR")) |> 
+  mutate(
+    ant_species = factor(
+      ant_species,
+      levels = c("AB", "RRB", "BBR")
+    ),
+    ant_full = case_when(
+      ant_species == "AB" ~ "C. sjostedti",
+      ant_species == "RRB" ~ "C. mimosae",
+      ant_species == "BBR" ~ "C. nigriceps"
+    )
+  )
+
+str(nests_clean)
+sample_n(nests_clean, 10)
+```
+
+**b.**
+In this dataset, a value of 1 indicates that a tree contained a bird nest, meaning it was actively selected for nesting by birds. A value of 0 indicates that the tree was an available but unused site, meaning no nest was present in that tree during sampling.
+
+**c.**
+Tree height (height_cm) is a continuous variable (measured in cm). As tree height increases, the probability of nest occurrence would likely increase because taller trees may provide greater visibility, reduced predation risk, and more suitable structural support for nests. This relationship is supported in the Methods section. 
+
+Ant species (ant_species) is a categorical variable with three levels (AB, RRB, BBR) representing different acacia-ant mutualists. As ant species changes, the probability of nest occurrence may vary because different ant species differ in aggressiveness and defensive behavior, which can either deter predators (making nesting safer) or deter birds from nesting in highly aggressive trees. This is described in the Introduction and Methods sections. 
+
+**d.**
+
+```{r}
+#| message: false
+models <- data.frame(
+  `Model number` = c(1, 2),
+  `Model description` = c(
+    "case_control ~ height_cm + ant_species (no interaction)",
+    "case_control ~ height_cm * ant_species (includes interaction)"
+  ),
+  `Response variable` = c("case_control", "case_control"),
+  `Interaction term` = c("No", "Yes")
+)
+
+knitr::kable(models)
+```
+
+**e.**
+```{r}
+# Model 1: additive model (no interaction)
+model1 <- glm(case_control ~ height_cm + ant_species,
+              data = nests_clean,
+              family = binomial)
+
+# Model 2: interaction model
+model2 <- glm(case_control ~ height_cm * ant_species,
+              data = nests_clean,
+              family = binomial)
+```
+
+**f.**
+```{r}
+AIC(model1, model2)
+```
+
+The best model as determined by Akaike’s Information Criterion (AIC) was the interaction model predicting case_control (probability of nest occurrence) as a function of height_cm, ant_species, and their interaction. This model had the lowest AIC value (237.80), indicating that allowing the effect of tree height to vary among ant species improved model fit compared to the additive model.
+
+**g.**
+```{r}
+# simulate residuals from the best model
+sim_res <- simulateResiduals(model2)
+
+# diagnostic plots
+plot(sim_res)
+```
+**Figure 1.** The DHARMa diagnostic plots were used to assess model fit for the selected interaction model. Even though there is some visual crowding present due to the large number of observations and binary response structure, the residual patterns were evaluated for systematic deviations from uniformity to determine whether the model appropriately captures variation in nest occurrence.
+
+**h.**
+```{r}
+#| message: false
+# install if needed
+# install.packages("ggeffects")
+
+library(ggeffects)
+library(ggplot2)
+
+# Generate model predictions
+pred <- ggpredict(model2, terms = c("height_cm", "ant_species"))
+
+# Plot predictions + underlying data
+ggplot() +
+  
+  # underlying data
+  geom_jitter(
+    data = nests_clean,
+    aes(x = height_cm, y = case_control),
+    width = 0,
+    height = 0.03,
+    alpha = 0.3,
+    color = "darkgray"
+  ) +
+  
+  # 95% confidence interval
+  geom_ribbon(
+    data = pred,
+    aes(x = x, ymin = conf.low, ymax = conf.high),
+    fill = "lightblue",
+    alpha = 0.4
+  ) +
+  
+  # prediction line
+  geom_line(
+    data = pred,
+    aes(x = x, y = predicted),
+    color = "orchid4",
+    linewidth = 1
+  ) +
+  
+  # separate panel for each ant species
+  facet_wrap(~group) +
+  
+  labs(
+    x = "Tree height (cm)",
+    y = "Probability of nest occurrence"
+  ) +
+  
+  # remove gray background and gridlines
+  theme_classic() +
+  
+  # remove legend
+  theme(legend.position = "none")
+```
+
+**Figure 2** Predicted probability of bird nest occurrence by tree height and acacia ant species. Model-predicted probabilities of nest occurrence are shown as a function of tree height (cm) for trees inhabited by Crematogaster sjostedti, Crematogaster mimosae, and Crematogaster nigriceps. Solid lines represent predictions from the selected logistic regression model, shaded ribbons represent 95% confidence intervals, and points show the observed nest occurrence data (1 = nest present, 0 = no nest present). Data source: Lujan, E., Nielsen, R., Short, Z., Wicks, S., Nderitu Watetu, W., Malingati Khasoha, L., Palmer, T. M., Goheen, J. R., & Alston, J. M. (2023). Data, code, and metadata for: Symbiotic acacia ants drive nesting behavior by birds in an African savanna [Data set]. Zenodo. https://doi.org/10.5281/zenodo.8373322
+
+**j.**
+```{r}
+#| message: false
+# New data for tallest tree in dataset
+newdata <- data.frame(
+  height_cm = 600,
+  ant_species = factor(
+    c("AB", "RRB", "BBR"),
+    levels = levels(nests_clean$ant_species)
+  )
+)
+
+# Predicted probabilities
+predictions <- predict(
+  model2,
+  newdata = newdata,
+  type = "response"
+)
+
+# Combine species and predictions
+prediction_table <- data.frame(
+  ant_species = newdata$ant_species,
+  predicted_probability = predictions
+)
+
+prediction_table
+```
+
+**k.**
+Figure 2 shows that the probability of nest occurrence was influenced by both tree height and acacia ant species, and that the effect of tree height differed among ant species. At the tallest observed tree height (600 cm), the predicted probability of nest occurrence was 0.20 for trees occupied by *C. sjostedti* (AB), 0.74 for trees occupied by *C. mimosae* (RRB), and 1.00 for trees occupied by *C. nigriceps* (BBR). These results indicate that taller trees were generally more likely to contain nests, but the strength of this relationship depended on the species of acacia ant inhabiting the tree. The observed pattern is consistent with the findings of Lujan et al. (2023), which suggest that birds preferentially select trees occupied by certain ant species because the ants aggressively defend their host trees, potentially reducing disturbance from browsing mammals and creating safer nesting sites.
+
+
+
 
 
