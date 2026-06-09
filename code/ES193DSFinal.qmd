@@ -1,0 +1,19 @@
+---
+title: "ENV S 193DS Final"
+format: pdf
+author: "Aylin Orozco"
+date: "06-09-2026"
+---
+
+GitHub Repository: [here](https://github.com/aylin224/ENVS-193DS_spring-2026_final.git)
+
+```{r}
+#| message: false
+library(tidyverse)
+library(here)
+library(janitor)
+
+data <- read_csv(here("data/nest_data_final.csv"))
+```
+
+
