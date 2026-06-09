@@ -85,8 +85,9 @@ knitr::kable(models)
 
 **e.**
 ```{r}
-# Model 1: additive model (no interaction)
-model1 <- glm(case_control ~ height_cm + ant_species,
+# Model 1: additive logistic model (no interaction)
+model1 <- glm(case_control ~ height_cm + 
+                ant_species,
               data = nests_clean,
               family = binomial)
 
@@ -98,6 +99,7 @@ model2 <- glm(case_control ~ height_cm * ant_species,
 
 **f.**
 ```{r}
+# AIC comparison used for model selection
 AIC(model1, model2)
 ```
 
@@ -108,7 +110,7 @@ The best model as determined by Akaike’s Information Criterion (AIC) was the i
 # simulate residuals from the best model
 sim_res <- simulateResiduals(model2)
 
-# diagnostic plots
+# # DHARMa diagnostics used to assess fit
 plot(sim_res)
 ```
 **Figure 1.** The DHARMa diagnostic plots were used to assess model fit for the selected interaction model. Even though there is some visual crowding present due to the large number of observations and binary response structure, the residual patterns were evaluated for systematic deviations from uniformity to determine whether the model appropriately captures variation in nest occurrence.
@@ -202,7 +204,12 @@ prediction_table
 **k.**
 Figure 2 shows that the probability of nest occurrence was influenced by both tree height and acacia ant species, and that the effect of tree height differed among ant species. At the tallest observed tree height (600 cm), the predicted probability of nest occurrence was 0.20 for trees occupied by *C. sjostedti* (AB), 0.74 for trees occupied by *C. mimosae* (RRB), and 1.00 for trees occupied by *C. nigriceps* (BBR). These results indicate that taller trees were generally more likely to contain nests, but the strength of this relationship depended on the species of acacia ant inhabiting the tree. The observed pattern is consistent with the findings of Lujan et al. (2023), which suggest that birds preferentially select trees occupied by certain ant species because the ants aggressively defend their host trees, potentially reducing disturbance from browsing mammals and creating safer nesting sites.
 
+## Problem 3. Affective and exploratory visualizations
 
+For Homework 2, I focused on showing the data clearly and analyzing it with standard graphs. The boxplot compares walk times between Reeboks and Vans, and the scatterplot looks at whether temperature affects trip duration. For Homework 3, I took the same data and turned it into a game-style visualization called Shoe Grand Prix, where the data is presented as a race from home to work with rankings, stats, and visual storytelling.
 
+All of the visualizations use the same walking dataset and are trying to explain what factors affect my walk to work. They all include information about trip duration and compare different variables, even though they present the information in different ways. The main goal of all three is to help viewers understand patterns in the data.
 
+The boxplot shows that my walks wearing Reeboks were usually shorter than my walks wearing Vans. The scatterplot shows that temperature doesn't seem to have much of an effect on how long my walks took. The affective visualization highlights the same result by showing Reeboks as the winner of the race. The patterns aren't really different between the visualizations because they're based on the same data, but the affective visualization makes the comparison more fun and easier to connect with.
 
+One suggestion I got was to make the visualization feel more personal and tell more of a story instead of just showing the data. I tried to do that by turning my walk into a race course and adding details like hills, puddles, weather, and shoe "stats." I also kept the boxplot in the final design so the visualization still includes the actual data while being more engaging and creative.
