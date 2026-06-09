@@ -6,4 +6,4 @@ Final project repository for ENVS 193DS Spring 2026
 ## Data and file overview
 
 ## Rendered output
-[Final PDF](code/ES193DSFinal.pdf')
+[Final PDF](.code/ES193DSFinal.pdf')
