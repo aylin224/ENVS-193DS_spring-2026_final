@@ -9,13 +9,19 @@ GitHub Repository: [here](https://github.com/aylin224/ENVS-193DS_spring-2026_fin
 
 ```{r}
 #| message: false
+# Set Up
 library(tidyverse)
 library(here)
 library(janitor)
 library(knitr)
 library(DHARMa)
+library(ggeffects)
+library(ggplot2)
+library(effsize)
 
 nests <- read_csv(here("data/nest_data_final.csv"))
+
+my_data <- read_csv(here("data/my_data - Sheet1.csv"))
 
 ```
 
@@ -121,9 +127,6 @@ plot(sim_res)
 # install if needed
 # install.packages("ggeffects")
 
-library(ggeffects)
-library(ggplot2)
-
 # Generate model predictions
 pred <- ggpredict(model2, terms = c("height_cm", "ant_species"))
 
@@ -206,6 +209,7 @@ Figure 2 shows that the probability of nest occurrence was influenced by both tr
 
 ## Problem 3. Affective and exploratory visualizations
 
+**a.**
 For Homework 2, I focused on showing the data clearly and analyzing it with standard graphs. The boxplot compares walk times between Reeboks and Vans, and the scatterplot looks at whether temperature affects trip duration. For Homework 3, I took the same data and turned it into a game-style visualization called Shoe Grand Prix, where the data is presented as a race from home to work with rankings, stats, and visual storytelling.
 
 All of the visualizations use the same walking dataset and are trying to explain what factors affect my walk to work. They all include information about trip duration and compare different variables, even though they present the information in different ways. The main goal of all three is to help viewers understand patterns in the data.
@@ -213,3 +217,49 @@ All of the visualizations use the same walking dataset and are trying to explain
 The boxplot shows that my walks wearing Reeboks were usually shorter than my walks wearing Vans. The scatterplot shows that temperature doesn't seem to have much of an effect on how long my walks took. The affective visualization highlights the same result by showing Reeboks as the winner of the race. The patterns aren't really different between the visualizations because they're based on the same data, but the affective visualization makes the comparison more fun and easier to connect with.
 
 One suggestion I got was to make the visualization feel more personal and tell more of a story instead of just showing the data. I tried to do that by turning my walk into a race course and adding details like hills, puddles, weather, and shoe "stats." I also kept the boxplot in the final design so the visualization still includes the actual data while being more engaging and creative.
+
+**b.**
+One analysis I could use for this dataset is a two-sample t-test to compare walking duration between Reebok and Vans shoes. This analysis is appropriate because my response variable, walking duration (in seconds), is a continuous variable, and my predictor variable, shoe type, is a categorical variable with two groups (Reebok and Vans).
+
+A two-sample t-test would help answer my research question because it tests whether the average walking duration differs between the two shoe types. Since I am interested in comparing the mean walk times of two independent groups, a two-sample t-test is a good fit for the data and the question I am asking.
+
+**c.**
+
+### Assumption Checks 
+```{r}
+#| message: false
+
+# Check normality for each shoe type
+my_data |>
+  group_by(`Shoe Type`) |>
+  summarize(
+    p_value = shapiro.test(`Duration (s)`)$p.value)
+
+# Check equal variances
+var.test(`Duration (s)` ~ `Shoe Type`,
+         data = my_data)
+
+# Q-Q plots for visual assessment of normality
+ggplot(my_data, aes(sample = `Duration (s)`)) +
+  stat_qq() +
+  stat_qq_line() +
+  facet_wrap(~ `Shoe Type`)
+```
+
+### Two Sample t-Test
+```{r}
+#| message: false
+# running t-test
+t.test(`Duration (s)` ~ `Shoe Type`,
+       data = my_data,
+       var.equal = FALSE)
+```
+
+### Calculate Effect Size
+```{r}
+#| message: false
+
+cohen.d(`Duration (s)` ~ `Shoe Type`,
+        data = my_data)
+```
+
