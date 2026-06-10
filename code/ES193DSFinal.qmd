@@ -300,3 +300,6 @@ ggplot(my_data,
 ```
 
 **Figure 3. ** Walking duration by shoe type. Boxplots and jittered data points comparing walking duration (seconds) between Reebok and Vans shoes. The boxplots show the median, interquartile range, and overall spread of walking durations, while the jittered points represent individual walks. Reebok shoes generally had shorter walking durations and less variation than Vans shoes, suggesting that shoe type may influence commute time.
+
+**f.**
+Walking duration differed between shoe types, with walks in Reebok shoes taking less time on average (664.8 s) than walks in Vans shoes (723.9 s), a difference of about 59 seconds. A Welch two-sample t-test showed that this difference was statistically significant (t = -4.48, df = 14.38, p < 0.001). The effect size was large (Cohen's d = -1.81), suggesting that shoe type had a strong effect on walking duration.
