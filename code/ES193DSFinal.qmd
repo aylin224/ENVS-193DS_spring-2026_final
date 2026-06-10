@@ -1,9 +1,14 @@
 ---
 title: "ENV S 193DS Final"
-format: pdf
 author: "Aylin Orozco"
 date: "06-09-2026"
+
+format:
+  pdf:
+    toc: true
+    number-sections: true
 ---
+
 
 GitHub Repository: [here](https://github.com/aylin224/ENVS-193DS_spring-2026_final.git)
 
@@ -76,6 +81,7 @@ Ant species (ant_species) is a categorical variable with three levels (AB, RRB, 
 
 ```{r}
 #| message: false
+
 models <- data.frame(
   `Model number` = c(1, 2),
   `Model description` = c(
@@ -161,7 +167,8 @@ ggplot() +
   
   # separate panel for each ant species
   facet_wrap(~group) +
-  
+ 
+   # label axes
   labs(
     x = "Tree height (cm)",
     y = "Probability of nest occurrence"
@@ -259,6 +266,7 @@ t.test(`Duration (s)` ~ `Shoe Type`,
 ```{r}
 #| message: false
 
+# calculate effect size
 cohen.d(`Duration (s)` ~ `Shoe Type`,
         data = my_data)
 ```
@@ -280,19 +288,20 @@ ggplot(my_data,
   geom_jitter(width = 0.15,
               alpha = 0.7,
               size = 2) +
-
+# label axes
   labs(
     x = "Shoe Type",
     y = "Walking Duration (seconds)"
   ) +
-
+# change colors to custom
   scale_fill_manual(values = c(
     "Reebok" = "steelblue",
     "Vans" = "purple"
   )) +
-
+# change theme from default
   theme_classic() +
 
+  # remove legend
   theme(
     legend.position = "none",
     text = element_text(size = 12)
