@@ -263,3 +263,40 @@ cohen.d(`Duration (s)` ~ `Shoe Type`,
         data = my_data)
 ```
 
+**d.**
+```{r}
+#| message: false
+
+ggplot(my_data,
+       aes(x = `Shoe Type`,
+           y = `Duration (s)`,
+           fill = `Shoe Type`)) +
+
+  # Create boxplots
+  geom_boxplot(alpha = 0.7,
+               outlier.shape = NA) +
+
+  # Underlying data
+  geom_jitter(width = 0.15,
+              alpha = 0.7,
+              size = 2) +
+
+  labs(
+    x = "Shoe Type",
+    y = "Walking Duration (seconds)"
+  ) +
+
+  scale_fill_manual(values = c(
+    "Reebok" = "steelblue",
+    "Vans" = "purple"
+  )) +
+
+  theme_classic() +
+
+  theme(
+    legend.position = "none",
+    text = element_text(size = 12)
+  )
+```
+
+**Figure 3. ** Walking duration by shoe type. Boxplots and jittered data points comparing walking duration (seconds) between Reebok and Vans shoes. The boxplots show the median, interquartile range, and overall spread of walking durations, while the jittered points represent individual walks. Reebok shoes generally had shorter walking durations and less variation than Vans shoes, suggesting that shoe type may influence commute time.
