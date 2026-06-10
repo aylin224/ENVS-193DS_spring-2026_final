@@ -1,0 +1,24 @@
+Date,Time,Shoe Type,Duration (s),Temperature (F),Traffic Level,Carrying Load,Distractions
+04/20,12:00 PM,Reebok,624,65,low,none,none
+04/21,12:00 PM,Vans,746,59,high,backpack,none
+04/22,11:52 AM,Reebok,707,65,low,backpack,music
+04/27,11:45 AM,Vans,709,67,high,backpack,phone use
+04/28,12:00 PM,Reebok,624,65,low,none,music
+4/28,4:00 PM,Vans,730,59,high,backpack,music
+4/29,11:55 AM,Reebok,710,65,low,backpack,music
+4/30,11:45 AM,Vans,702,67,high,backpack,phone use
+05/02,11:58 AM,Reebok,698,66,low,none,none
+05/04,12:03 PM,Vans,735,61,high,backpack,music
+05/06,11:50 AM,Reebok,705,64,low,backpack,music
+05/08,11:47 AM,Vans,718,68,high,backpack,phone use
+05/10,12:01 PM,Reebok,621,66,low,none,none
+05/12,3:58 PM,Vans,742,60,high,backpack,music
+05/14,11:53 AM,Reebok,709,65,low,backpack,music
+05/16,11:46 AM,Vans,700,69,high,backpack,phone use
+05/18,12:00 PM,Reebok,626,67,low,none,none
+05/20,11:55 AM,Vans,728,62,high,backpack,music
+5/22,11:52 AM,Reebok,703,66,low,backpack,music
+05/24,4:02 PM,Vans,739,63,high,backpack,phone use
+05/26,12:01 PM,Reebok,623,68,low,none,none
+05/27,11:49 AM,Vans,714,69,high,backpack,music
+05/27,3:57 PM,Reebok,628,67,low,none,none
